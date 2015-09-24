@@ -1,2 +1,5 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'brakeman_translate_checkstyle_format'
+require 'coveralls'
+Coveralls.wear!
+
+require 'bundler'
+Bundler.require :default, :development

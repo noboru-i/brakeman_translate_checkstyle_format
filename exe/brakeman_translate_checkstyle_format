@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'brakeman_translate_checkstyle_format'
+require 'brakeman_translate_checkstyle_format/cli'
+
+BrakemanTranslateCheckstyleFormat::CLI.start

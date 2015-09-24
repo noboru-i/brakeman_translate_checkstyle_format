@@ -1,8 +1,6 @@
 # BrakemanTranslateCheckstyleFormat
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/brakeman_translate_checkstyle_format`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Translate brakeman json format into checkstyle format.
 
 ## Installation
 
@@ -22,7 +20,18 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Use pipe
+
+```
+cat rubocop.json | brakeman_translate_checkstyle_format translate
+```
+
+### Use command-line option
+
+```
+brakeman_translate_checkstyle_format translate --file="rubocop.json"
+```
+
 
 ## Development
 
