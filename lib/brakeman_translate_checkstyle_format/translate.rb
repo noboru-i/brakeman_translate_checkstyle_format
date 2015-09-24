@@ -13,49 +13,40 @@ module BrakemanTranslateCheckstyleFormat
       doc << REXML::XMLDecl.new('1.0', 'UTF-8')
 
       checkstyle = doc.add_element('checkstyle')
-      bug_instances = xml['BugCollection']['BugInstance']
-      if bug_instances.blank?
-        FindbugsTranslateCheckstyleFormat::Translate.set_dummy(xml, checkstyle)
+      warnings = json['warnings']
+      if warnings.empty?
+        BrakemanTranslateCheckstyleFormat::Translate.set_dummy(json, checkstyle)
         return doc
       end
 
-      bug_instances = [bug_instances] if bug_instances.is_a?(Hash)
-      bug_instances.each do |bug_instance|
-        source_line = bug_instance['SourceLine']
+      warnings.each do |warning|
         file = checkstyle.add_element('file',
-                                      'name' => FindbugsTranslateCheckstyleFormat::Translate.fqcn_to_path(source_line['@classname'], xml)
+                                      'name' => BrakemanTranslateCheckstyleFormat::Translate.convert_to_absolute(warning, json)
                                      )
         file.add_element('error',
-                         'line' => source_line['@start'],
+                         'line' => warning['line'],
                          'severity' => 'error',
-                         'message' => FindbugsTranslateCheckstyleFormat::Translate.create_message(bug_instance)
+                         'message' => BrakemanTranslateCheckstyleFormat::Translate.create_message(warning)
                         )
       end
 
       doc
     end
 
-    def self.fqcn_to_path(fqcn, xml)
-      path = fqcn.tr('.', '/').tr('$[0-9]+', '') + '.java'
-      src_dirs = xml['BugCollection']['Project']['SrcDir']
-      src_dirs = [src_dirs] unless src_dirs.is_a?(Array)
-      src_dirs.find { |src| !src.index(path).nil? }
+    def self.convert_to_absolute(warning, json)
+      "#{json['scan_info']['app_path']}/#{warning['file']}"
     end
 
-    def self.set_dummy(xml, checkstyle)
-      dummy_src_dir = xml['BugCollection']['Project']['SrcDir']
-      dummy_src_dir = dummy_src_dir.first if dummy_src_dir.is_a?(Array)
-
+    def self.set_dummy(json, checkstyle)
       checkstyle.add_element('file',
-                             'name' => dummy_src_dir
+                             'name' => ''
                             )
 
       checkstyle
     end
 
-    def self.create_message(bug_instance)
-      link = "http://findbugs.sourceforge.net/bugDescriptions.html##{bug_instance['@type']}"
-      "[#{bug_instance['@category']}][#{bug_instance['@type']}] #{bug_instance['LongMessage']}\n#{link}"
+    def self.create_message(warning)
+      "[#{warning['confidence']}][#{warning['warning_type']}] #{warning['message']}\n#{warning['link']}"
     end
   end
 end

@@ -23,13 +23,15 @@ Or install it yourself as:
 ### Use pipe
 
 ```
-cat rubocop.json | brakeman_translate_checkstyle_format translate
+brakeman -o brakeman.json
+cat brakeman.json | brakeman_translate_checkstyle_format translate
 ```
 
 ### Use command-line option
 
 ```
-brakeman_translate_checkstyle_format translate --file="rubocop.json"
+brakeman -o brakeman.json
+brakeman_translate_checkstyle_format translate --file="brakeman.json"
 ```
 
 
